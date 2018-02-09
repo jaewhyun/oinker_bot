@@ -1,27 +1,8 @@
-# Copyright (c) 2015–2016 Molly White
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
+import pdb; pdb.set_trace()
 import os, re, tweepy, random
 from secrets import *
 from time import gmtime, strftime
-from wordfilter import wordfilter
+from wordfilter import Wordfilter
 
 
 # ====== Individual bot configuration ==========================
@@ -47,23 +28,25 @@ regex = "!@#$%^&*()_-=+}{][\|:;><,./?~`"
 #https://github.com/torypeterschild/dream-bot/blob/master/bot.py
 def get_tweet():
     """Get list of tweets matching a certain query"""
-    query = random.choice(data['latin'])
-    results = api.search(q=query, count = 50)
+    pdb.set_trace()
+    query = random.choice(querymatchdata['latin'])
+    results = api.search(q=query, count=50)
     return results
 
 def filter_tweets(results_):
     """Filter tweets that are retweets or contains mention/s, etc"""
     while True:
-        tweet_ = results_.pop(0);
+        tweet_ = random.choice(results_)
         text = tweet_.text;
 
-        if not (hasattr(tweet_, "retweeted_stats") or
-            toptweet.in_reply_to_status_id or
-            toptweet.in_reply_to_screen_name or
-            toptweet.truncated or
+        if not (hasattr(tweet_, "retweeted_status") or
+            # pdb.set_trace()
+            tweet_.in_reply_to_status_id or
+            tweet_.in_reply_to_screen_name or
+            tweet_.truncated or
             "@" in text or
             "RT" in text or
-            "#" in text or):
+            "#" in text):
             if create_tweet(text):
                 break
             else:
@@ -79,26 +62,28 @@ def create_tweet(_text):
         return False
     else:
         translate_pig_latin = _text.split()
+
         for word in translate_pig_latin:
-            if hasNumbers(word):
-                pig_latin_output.append(word)
-            elif word in regex:
-                pig_latin_output.append(word)
-            elif word[0] in vowels:
-                word=word+"way"
-                pig_latin_output.append(word)
-            elif word[0] in constants:
-                if word[1] in constants:
-                    word = word[2:]+word[0]+word[1]+"ay"
+            if len(word) > 1:
+                if hasNumbers(word):
                     pig_latin_output.append(word)
+                elif word in regex:
+                    pig_latin_output.append(word)
+                elif word[0] in vowels:
+                    word=word+"way"
+                    pig_latin_output.append(word)
+                elif word[0] in constants:
+                    if word[1] in constants:
+                        word = word[2:]+word[0]+word[1]+"ay"
+                        pig_latin_output.append(word)
+                    else:
+                        word = word[1:]+word[0]+"ay"
+                        pig_latin_output.append(word)
                 else:
-                    word = word[1:]+word[0]+"ay"
                     pig_latin_output.append(word)
-            else:
-                pig_latin_output.append(word)
 
         translated_ = " ".join(pig_latin_output)
-        if tweet(translated):
+        if tweet(translated_):
             return True
 
 def tweet(text):
@@ -108,7 +93,8 @@ def tweet(text):
     try:
         api.update_status(text)
     except tweepy.error.TweepError as e:
-        log(e.message)
+        # errorobject = e.pop()
+        log(e.response.text)
     else:
         log("Tweeted: " + text)
 
@@ -121,5 +107,6 @@ def log(message):
 
 
 if __name__ == "__main__":
+
     results = get_tweet()
-    create_tweet()
+    filter_tweets(results)
