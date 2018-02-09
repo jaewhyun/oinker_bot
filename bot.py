@@ -2,8 +2,6 @@ import pdb; pdb.set_trace()
 import os, re, tweepy, random
 from secrets import *
 from time import gmtime, strftime
-from wordfilter import Wordfilter
-
 
 # ====== Individual bot configuration ==========================
 bot_username = 'oinker_bot'
@@ -15,8 +13,6 @@ auth = tweepy.OAuthHandler(C_KEY, C_SECRET)
 auth.set_access_token(A_TOKEN, A_TOKEN_SECRET)
 api = tweepy.API(auth)
 tweets = tweepy.Cursor(api.user_timeline).items()
-
-wordfilter = Wordfilter()
 
 vowels = "aeiouAEIOU"
 constants = "bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ"
