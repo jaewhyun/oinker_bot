@@ -29,17 +29,17 @@ def get_tweet():
     results = api.search(q=query, count=50)
     return results
 
-def filter_tweets(results_):
+def filter_tweets(_results):
     """Filter tweets that are retweets or contains mention/s, etc"""
     while True:
-        tweet_ = random.choice(results_)
-        text = tweet_.text;
+        _tweet = random.choice(_results)
+        text = _tweet.text;
 
-        if not (hasattr(tweet_, "retweeted_status") or
+        if not (hasattr(_tweet, "retweeted_status") or
             # pdb.set_trace()
-            tweet_.in_reply_to_status_id or
-            tweet_.in_reply_to_screen_name or
-            tweet_.truncated or
+            _tweet.in_reply_to_status_id or
+            _tweet.in_reply_to_screen_name or
+            _tweet.truncated or
             "@" in text or
             "RT" in text or
             "#" in text):
@@ -78,8 +78,8 @@ def create_tweet(_text):
                 else:
                     pig_latin_output.append(word)
 
-        translated_ = " ".join(pig_latin_output)
-        if tweet(translated_):
+        _translated = " ".join(pig_latin_output)
+        if tweet(_translated):
             return True
 
 def tweet(text):
