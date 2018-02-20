@@ -24,8 +24,6 @@ constants = "bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ"
 querymatchdata = {'latin': ['pig']}
 regex = "!@#$%^&*()_-=+}{][\|:;><,./?~`"
 
-
-#https://github.com/torypeterschild/dream-bot/blob/master/bot.py
 def get_tweet():
     """Get list of tweets matching a certain query"""
     pdb.set_trace()
